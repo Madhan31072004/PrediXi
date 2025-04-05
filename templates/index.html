@@ -145,29 +145,16 @@
   <section id="live" class="py-5 bg-light">
     <div class="container">
       <h2 class="section-title text-center">Live Matches</h2>
-      <div class="row">
-        <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card match-card">
-            <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d" class="card-img-top" alt="Live Match 1">
-            <div class="card-body">
-              <h5 class="card-title">South Africa vs New Zealand</h5>
-              <p class="card-text">Live now - 3rd Test, Cape Town</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card match-card">
-            <img src="https://images.unsplash.com/photo-1619359778727-b004c1c9ef68" class="card-img-top" alt="Live Match 2">
-            <div class="card-body">
-              <h5 class="card-title">Bangladesh vs Sri Lanka</h5>
-              <p class="card-text">Live - 5th ODI, Dhaka</p>
-            </div>
+      <div class="row" id="live-matches-container">
+        <!-- Loading spinner will be shown initially -->
+        <div class="col-12 text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
         </div>
       </div>
     </div>
   </section>
-
   <!-- Contact Section -->
   <section id="contact" class="py-5">
     <div class="container">
@@ -203,7 +190,59 @@
 
   <script>
     // Initialize EmailJS
-    emailjs.init("La2ztB_bS13WLHIoj"); // Replace this with your actual public key
+    emailjs.init("La2ztB_bS13WLHIoj"); 
+    const API_KEY = 'AIzaSyAohIHO1PF7sARm4NcVvaBotclf8aiNEJc';
+    const CX = 'd65e7ba677a7a497d';
+
+    function fetchLiveMatches() {
+      const container = document.getElementById('live-matches-container');
+      
+      fetch(`https://www.googleapis.com/customsearch/v1?q=live+cricket+matches&key=${API_KEY}&cx=${CX}`)
+        .then(response => response.json())
+        .then(data => {
+          container.innerHTML = ''; // Clear loading spinner
+          
+          if (!data.items || data.items.length === 0) {
+            container.innerHTML = `
+              <div class="col-12">
+                <div class="alert alert-info">No live matches found. Check back later!</div>
+              </div>
+            `;
+            return;
+          }
+          
+          // Process and display results
+          data.items.forEach((item, index) => {
+            if (index < 6) { // Limit to 6 results
+              container.innerHTML += `
+                <div class="col-md-6 col-lg-4 mb-4">
+                  <div class="card match-card h-100">
+                    <div class="card-body">
+                      <h5 class="card-title">${item.title}</h5>
+                      <p class="card-text">${item.snippet}</p>
+                      <a href="${item.link}" target="_blank" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching live matches:', error);
+          container.innerHTML = `
+            <div class="col-12">
+              <div class="alert alert-danger">Failed to load live matches. Please try again later.</div>
+            </div>
+          `;
+        });
+    }
+
+    // Call the function when page loads
+    document.addEventListener('DOMContentLoaded', fetchLiveMatches);
+
+    // Refresh every 5 minutes (300000 ms)
+    setInterval(fetchLiveMatches, 300000);// Replace this with your actual public key
 
     document.getElementById('contact-form').addEventListener('submit', function (e) {
       e.preventDefault();
