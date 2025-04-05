@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrediXI - Registration</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .brand-name {
+            text-align: center;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .btn-primary {
+            width: 100%;
+        }
+        .switch-auth {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="auth-container">
+            <h2 class="brand-name">PrediXI</h2>
+            <p class="text-center text-muted">Your Ultimate Fantasy Cricket Prediction Platform</p>
+            <form id="registrationForm">
+                <h3 class="text-center">Create Account</h3>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input id="username" type="text" oninput="validateName()" class="form-control" placeholder="Enter username" required>
+                    <p id="usernameError" class="error-message"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="mobile" class="form-label">Mobile Number</label>
+                    <input id="mobile" type="tel" oninput="validateMobile()" class="form-control" pattern="[0-9]{10}" maxlength="10" placeholder="Enter mobile number" required>
+                    <p id="mobileError" class="error-message"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" type="password" oninput="validatePassword()" class="form-control" placeholder="Enter Password" required>
+                    <p id="passwordError" class="error-message"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input id="confirmPassword" type="password" oninput="validateConfirmPassword()" class="form-control" placeholder="Re-enter Password" required>
+                    <p id="confirmPasswordError" class="error-message"></p>
+                </div>
+
+                <button type="submit" class="btn btn-primary" onclick="submit()">Sign Up</button>
+
+                <p class="switch-auth">Already have an account? 
+                    <a href="/login" class="text-primary">Login</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script ssrc="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      function validateName() {
+        var username = document.getElementById("username").value;
+        var usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
+        if (usernameRegex.test(username)) {
+          document.getElementById("usernameError").innerHTML = "";
+          document.getElementById("username").style.borderColor = "green";
+          } else {
+            document.getElementById("usernameError").innerHTML = "Username should be 3-20 characters long and can contain only alphabets and numbers.";
+            document.getElementById("username").style.borderColor = "red";
+            }
+            }
+            function validateMobile() {
+              var mobile = document.getElementById("mobile").value;
+              var mobileRegex = /^[0-9]{10}$/;
+              if (mobileRegex.test(mobile)) {
+                document.getElementById("mobileError").innerHTML = "";
+                document.getElementById("mobile").style.borderColor = "green";
+                } else {
+                  document.getElementById("mobileError").innerHTML = "Mobile number should be 10 digits long.";
+                  document.getElementById("mobile").style.borderColor = "red";
+                  }
+                  }
+                  function validateEmail() {
+                    var email = document.getElementById("email").value;
+                    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (emailRegex.test(email)) {
+                      document.getElementById("emailError").innerHTML = "";
+                      document.getElementById("email").style.borderColor = "green";
+                      } else {
+                        document.getElementById("emailError").innerHTML = "Please enter a valid email address.";
+                        document.getElementById("email").style.borderColor = "red";
+                        }
+                        }
+                        function validateConfirmPassword(){
+                          var confirmPassword = document.getElementById("confirmPassword").value;
+                          var password = document.getElementById("password").value;
+                          if(confirmPassword == password){
+                            document.getElementById("confirmPasswordError").innerHTML = "";
+                            document.getElementById("confirmPassword").style.borderColor = "green";
+                            } else {
+                              document.getElementById("confirmPasswordError").innerHTML = "Password and confirm password do not match.";
+                              document.getElementById("confirmPassword").style.borderColor = "red";
+                            }
+                        }
+                        function submit() {
+                          var name = document.getElementById("name").value;
+                          var mobile = document.getElementById("mobile").value;
+                          var email = document.getElementById("email").value;
+                          var password = document.getElementById("password").value;
+                          var confirmPassword = document.getElementById("confirmPassword").value;
+                          var nameRegex = /^[a-zA-Z ]{2,30}$/;
+                          var mobileRegex = /^[0-9]{10}$/;
+                          var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                          var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                          if (!nameRegex.test(name)) {
+                            alert("Please enter a valid name.");
+                            return false;
+                          }
+                          if (!mobileRegex.test(mobile)) {
+                            alert("Please enter a valid mobile number.");
+                            return false;
+                          }
+                          if (!emailRegex.test(email)) {
+                            alert("Please enter a valid email address.");
+                            return false;
+                          }
+                          if (!passwordRegex.test(password)) {
+                            alert("Please enter a valid password.");
+                            return false;
+                          }
+                          if (password !== confirmPassword) {
+                            alert("Passwords do not match.");
+                            return false;
+                          }
+                          firebase.auth().createUserWithEmailAndPassword(email, password)
+                            .then((userCredential) => {
+                              // Signed in 
+                              var user = userCredential.user;
+                              // ...
+                              })
+                              .catch((error) => {
+                                var errorCode = error.code;
+                                var errorMessage = error.message;
+                                // ..
+                              });
+                          return false;
+                          }
+    </script>
+</body>
+</html>
