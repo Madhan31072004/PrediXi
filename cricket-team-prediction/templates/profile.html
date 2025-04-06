@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
+<!-- rg -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
     <!-- Bootstrap CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <title>Profile - PrediXI</title>
 
     <style>
@@ -18,7 +20,7 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        font-family: 'Poppins', sans-serif;
         background-color: #f3f4f6;
         color: #1f2937;
         line-height: 1.5;
@@ -33,6 +35,10 @@
       .nav-link {
         color: #fff !important;
         font-weight: 500;
+      }
+
+      .nav-link.active {
+        color: #a5b4fc !important;
       }
 
       .navbar-nav .nav-link:hover {
@@ -93,8 +99,10 @@
         padding: 2rem;
         background-color: #f9fafb;
         display: flex;
-        justify-content: center;
-        align-items: flex-start;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 1.5rem;
       }
 
       .profile-image-container {
@@ -138,6 +146,7 @@
       .icon {
         font-size: 1.25rem;
         color: #6b7280;
+        margin-top: 0.25rem;
       }
 
       .input-container {
@@ -154,11 +163,147 @@
 
       .value {
         color: #1f2937;
+        display: block;
+        padding: 0.375rem 0;
       }
 
       .balance {
         font-size: 1.25rem;
         font-weight: 700;
+      }
+
+      .btn-edit {
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .btn-edit:hover {
+        background-color: #2563eb;
+      }
+
+      .btn-save {
+        background-color: #10b981;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .btn-save:hover {
+        background-color: #059669;
+      }
+
+      .btn-cancel {
+        background-color: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-left: 0.5rem;
+      }
+
+      .btn-cancel:hover {
+        background-color: #dc2626;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s;
+      }
+
+      .form-control:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .image-upload {
+        position: relative;
+        width: 100%;
+        text-align: center;
+      }
+
+      .image-upload input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+      }
+
+      .image-upload-label {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: #3b82f6;
+        color: white;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .image-upload-label:hover {
+        background-color: #2563eb;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        gap: 0.5rem;
+      }
+
+      .stats-container {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 1.5rem;
+        text-align: center;
+      }
+
+      .stat-item {
+        padding: 0.5rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #3b82f6;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .error-message {
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        display: block;
+        min-height: 20px;
+      }
+
+      .is-invalid {
+        border-color: #ef4444 !important;
+      }
+
+      .is-valid {
+        border-color: #10b981 !important;
       }
 
       @media (min-width: 768px) {
@@ -178,7 +323,7 @@
   </head>
   <body>
 
-    <!-- ✅ NAVBAR -->
+    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
         <a class="navbar-brand fw-bold" href="/">PrediXI</a>
@@ -189,14 +334,14 @@
           <ul class="navbar-nav ms-auto">
             <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/profile">Profile</a></li>
             <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <!-- ✅ HEADER -->
+    <!-- HEADER -->
     <header class="header">
       <div class="header-content">
         <div class="logo-container">
@@ -206,88 +351,360 @@
       </div>
     </header>
 
-    <!-- ✅ PROFILE BODY -->
+    <!-- PROFILE BODY -->
     <div id="app-container" class="profile-container"></div>
 
-    <!-- ✅ JS: Profile Rendering -->
+    <!-- JS: Profile Rendering and Interaction -->
     <script>
-      let userData = {
-        username: '',
-        email: '',
-        mobile: '+91 9998887770',
-        password: '',
-        balance: 0,
-        profileImage: 'https://media.istockphoto.com/id/1097854158/photo/day-at-the-campus.jpg?s=612x612&w=0&k=20&c=qW62usluDwG6pLJ-4G9x7h43byggo0uvGGVZwyOLr_g='
-      };
-
+      // Load user data from localStorage (from registration)
       function loadUserData() {
-        const savedEmail = localStorage.getItem('userEmail');
-        const savedPassword = localStorage.getItem('userPassword');
-        const savedImage = localStorage.getItem('profileImage');
-        const savedBalance = localStorage.getItem('balance');
-
-        userData.email = savedEmail || 'user@example.com';
-        userData.password = savedPassword || '********';
-        userData.username = savedEmail ? savedEmail.split('@')[0] : 'User';
-        if (savedImage) userData.profileImage = savedImage;
-        if (savedBalance) userData.balance = parseFloat(savedBalance);
+        const savedUser = localStorage.getItem('registeredUser');
+        if (savedUser) {
+          return JSON.parse(savedUser);
+        } else {
+          // If no registration data, create default from registration form
+          return {
+            id: 'user' + Math.floor(Math.random() * 10000),
+            username: 'cricketfan',
+            fullName: '',
+            email: '',
+            mobile: '',
+            password: '',
+            balance: 0,
+            profileImage: 'https://randomuser.me/api/portraits/men/' + Math.floor(Math.random() * 100) + '.jpg',
+            joinedDate: new Date().toISOString(),
+            lastLogin: new Date().toISOString(),
+            stats: {
+              matchesPredicted: 0,
+              correctPredictions: 0,
+              accuracy: 0,
+              rank: 0
+            }
+          };
+        }
       }
 
-      function renderProfilePage() {
+      // Save user data to localStorage
+      function saveUserData(userData) {
+        localStorage.setItem('registeredUser', JSON.stringify(userData));
+      }
+
+      // Validate form fields (same as registration validation)
+      function validateName(name) {
+        const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
+        return usernameRegex.test(name);
+      }
+
+      function validateMobile(mobile) {
+        const mobileRegex = /^[0-9]{10}$/;
+        return mobileRegex.test(mobile);
+      }
+
+      function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+
+      function validatePassword(password) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return passwordRegex.test(password);
+      }
+
+      // Render the profile page with view or edit mode
+      function renderProfilePage(userData, editMode = false) {
         const container = document.getElementById('app-container');
+        
         container.innerHTML = `
           <div class="profile-card">
             <div class="profile-left">
               <div class="profile-image-container">
                 <img src="${userData.profileImage}" alt="Profile" id="profileImage">
               </div>
+              <div class="image-upload">
+                ${editMode ? `
+                  <label for="imageUpload" class="image-upload-label">
+                    <i class="fas fa-camera"></i> Change Photo
+                  </label>
+                  <input type="file" id="imageUpload" accept="image/*">
+                ` : ''}
+              </div>
+              <div class="text-center">
+                <h3>${userData.fullName || userData.username}</h3>
+                <p class="text-muted">Member since ${new Date(userData.joinedDate).toLocaleDateString()}</p>
+              </div>
+              
+              ${!editMode ? `
+                <div class="stats-container">
+                  <div class="stat-item">
+                    <div class="stat-value">${userData.stats.matchesPredicted}</div>
+                    <div class="stat-label">Matches</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-value">${userData.stats.correctPredictions}</div>
+                    <div class="stat-label">Correct</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-value">${userData.stats.accuracy}%</div>
+                    <div class="stat-label">Accuracy</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-value">#${userData.stats.rank}</div>
+                    <div class="stat-label">Rank</div>
+                  </div>
+                </div>
+              ` : ''}
             </div>
             <div class="profile-right">
-              <h2>Profile Details</h2>
+              <div class="d-flex justify-content-between align-items-center">
+                <h2>Profile Details</h2>
+                ${!editMode ? `
+                  <button class="btn-edit" id="editProfileBtn">
+                    <i class="fas fa-edit"></i> Edit Profile
+                  </button>
+                ` : ''}
+              </div>
+              
               <div class="profile-details">
                 <div class="input-group">
-                  <span class="icon">👤</span>
+                  <span class="icon"><i class="fas fa-user"></i></span>
+                  <div class="input-container">
+                    <label>Full Name</label>
+                    ${editMode ? `
+                      <input type="text" class="form-control" id="fullNameInput" value="${userData.fullName || ''}">
+                      <span id="fullNameError" class="error-message"></span>
+                    ` : `<span class="value">${userData.fullName || 'Not provided'}</span>`}
+                  </div>
+                </div>
+                
+                <div class="input-group">
+                  <span class="icon"><i class="fas fa-at"></i></span>
                   <div class="input-container">
                     <label>Username</label>
-                    <span class="value">${userData.username}</span>
+                    ${editMode ? `
+                      <input type="text" class="form-control" id="usernameInput" value="${userData.username}">
+                      <span id="usernameError" class="error-message"></span>
+                    ` : `<span class="value">${userData.username}</span>`}
                   </div>
                 </div>
+                
                 <div class="input-group">
-                  <span class="icon">📧</span>
+                  <span class="icon"><i class="fas fa-envelope"></i></span>
                   <div class="input-container">
                     <label>Email</label>
-                    <span class="value">${userData.email}</span>
+                    ${editMode ? `
+                      <input type="email" class="form-control" id="emailInput" value="${userData.email}">
+                      <span id="emailError" class="error-message"></span>
+                    ` : `<span class="value">${userData.email || 'Not provided'}</span>`}
                   </div>
                 </div>
+                
                 <div class="input-group">
-                  <span class="icon">📱</span>
+                  <span class="icon"><i class="fas fa-mobile-alt"></i></span>
                   <div class="input-container">
                     <label>Mobile</label>
-                    <span class="value">${userData.mobile}</span>
+                    ${editMode ? `
+                      <input type="tel" class="form-control" id="mobileInput" value="${userData.mobile}">
+                      <span id="mobileError" class="error-message"></span>
+                    ` : `<span class="value">${userData.mobile || 'Not provided'}</span>`}
                   </div>
                 </div>
+                
                 <div class="input-group">
-                  <span class="icon">🔒</span>
+                  <span class="icon"><i class="fas fa-lock"></i></span>
                   <div class="input-container">
                     <label>Password</label>
-                    <span class="value">••••••••</span>
+                    ${editMode ? `
+                      <input type="password" class="form-control" id="passwordInput" value="${userData.password}">
+                      <span id="passwordError" class="error-message"></span>
+                    ` : `<span class="value">••••••••</span>`}
                   </div>
                 </div>
+                
                 <div class="input-group">
-                  <span class="icon">💰</span>
+                  <span class="icon"><i class="fas fa-wallet"></i></span>
                   <div class="input-container">
                     <label>Wallet Balance</label>
                     <span class="value balance">$${userData.balance.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
+              
+              ${editMode ? `
+                <div class="action-buttons">
+                  <button class="btn-save" id="saveProfileBtn">
+                    <i class="fas fa-save"></i> Save Changes
+                  </button>
+                  <button class="btn-cancel" id="cancelEditBtn">
+                    <i class="fas fa-times"></i> Cancel
+                  </button>
+                </div>
+              ` : ''}
             </div>
           </div>`;
+          
+        // Add event listeners if in edit mode
+        if (editMode) {
+          // Image upload handler
+          document.getElementById('imageUpload')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function(event) {
+                document.getElementById('profileImage').src = event.target.result;
+                userData.profileImage = event.target.result;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+          
+          // Field validation handlers
+          document.getElementById('fullNameInput')?.addEventListener('input', function() {
+            const errorElement = document.getElementById('fullNameError');
+            if (this.value.length > 0 && this.value.length < 3) {
+              errorElement.textContent = "Name should be at least 3 characters";
+              this.classList.add('is-invalid');
+              this.classList.remove('is-valid');
+            } else {
+              errorElement.textContent = "";
+              this.classList.remove('is-invalid');
+              this.classList.add('is-valid');
+            }
+          });
+          
+          document.getElementById('usernameInput')?.addEventListener('input', function() {
+            const errorElement = document.getElementById('usernameError');
+            if (!validateName(this.value)) {
+              errorElement.textContent = "Username should be 3-20 characters (letters and numbers only)";
+              this.classList.add('is-invalid');
+              this.classList.remove('is-valid');
+            } else {
+              errorElement.textContent = "";
+              this.classList.remove('is-invalid');
+              this.classList.add('is-valid');
+            }
+          });
+          
+          document.getElementById('emailInput')?.addEventListener('input', function() {
+            const errorElement = document.getElementById('emailError');
+            if (!validateEmail(this.value)) {
+              errorElement.textContent = "Please enter a valid email address";
+              this.classList.add('is-invalid');
+              this.classList.remove('is-valid');
+            } else {
+              errorElement.textContent = "";
+              this.classList.remove('is-invalid');
+              this.classList.add('is-valid');
+            }
+          });
+          
+          document.getElementById('mobileInput')?.addEventListener('input', function() {
+            const errorElement = document.getElementById('mobileError');
+            if (!validateMobile(this.value)) {
+              errorElement.textContent = "Please enter a valid 10-digit mobile number";
+              this.classList.add('is-invalid');
+              this.classList.remove('is-valid');
+            } else {
+              errorElement.textContent = "";
+              this.classList.remove('is-invalid');
+              this.classList.add('is-valid');
+            }
+          });
+          
+          document.getElementById('passwordInput')?.addEventListener('input', function() {
+            const errorElement = document.getElementById('passwordError');
+            if (!validatePassword(this.value)) {
+              errorElement.textContent = "Password must contain 8+ chars with uppercase, lowercase, number and special char";
+              this.classList.add('is-invalid');
+              this.classList.remove('is-valid');
+            } else {
+              errorElement.textContent = "";
+              this.classList.remove('is-invalid');
+              this.classList.add('is-valid');
+            }
+          });
+          
+          // Save button handler
+          document.getElementById('saveProfileBtn').addEventListener('click', function() {
+            // Validate all fields before saving
+            const fullName = document.getElementById('fullNameInput').value;
+            const username = document.getElementById('usernameInput').value;
+            const email = document.getElementById('emailInput').value;
+            const mobile = document.getElementById('mobileInput').value;
+            const password = document.getElementById('passwordInput').value;
+            
+            let isValid = true;
+            
+            if (fullName.length > 0 && fullName.length < 3) {
+              document.getElementById('fullNameInput').classList.add('is-invalid');
+              isValid = false;
+            }
+            
+            if (!validateName(username)) {
+              document.getElementById('usernameInput').classList.add('is-invalid');
+              isValid = false;
+            }
+            
+            if (!validateEmail(email)) {
+              document.getElementById('emailInput').classList.add('is-invalid');
+              isValid = false;
+            }
+            
+            if (mobile && !validateMobile(mobile)) {
+              document.getElementById('mobileInput').classList.add('is-invalid');
+              isValid = false;
+            }
+            
+            if (password && !validatePassword(password)) {
+              document.getElementById('passwordInput').classList.add('is-invalid');
+              isValid = false;
+            }
+            
+            if (!isValid) {
+              alert('Please correct the errors before saving.');
+              return;
+            }
+            
+            // Update user data
+            userData.fullName = fullName;
+            userData.username = username;
+            userData.email = email;
+            userData.mobile = mobile;
+            if (password) userData.password = password;
+            
+            // Save to localStorage (in a real app, you would send to backend)
+            saveUserData(userData);
+            
+            // Render view mode
+            renderProfilePage(userData, false);
+            
+            // Show success message
+            alert('Profile updated successfully!');
+          });
+          
+          // Cancel button handler
+          document.getElementById('cancelEditBtn').addEventListener('click', function() {
+            renderProfilePage(userData, false);
+          });
+        } else {
+          // Edit button handler
+          document.getElementById('editProfileBtn')?.addEventListener('click', function() {
+            renderProfilePage(userData, true);
+          });
+        }
       }
 
       function initApp() {
-        loadUserData();
-        renderProfilePage();
+        // Load user data from registration
+        let userData = loadUserData();
+        
+        // If coming from registration, show success message
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('fromRegistration')) {
+          alert('Registration successful! Welcome to PrediXI.');
+        }
+        
+        // Render the profile page
+        renderProfilePage(userData);
       }
 
       document.addEventListener('DOMContentLoaded', initApp);
