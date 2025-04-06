@@ -17,6 +17,27 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       scroll-behavior: smooth;
     }
+    .hero {
+    height: 100vh;
+    overflow: hidden;
+  }
+  .carousel-item img {
+    height: 100vh;
+    object-fit: cover;
+  }
+  .hero-content {
+    z-index: 10;
+  }
+  .carousel-inner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
 
     .navbar {
       background: var(--primary-gradient);
@@ -43,30 +64,6 @@
       height: 2px;
       background: white;
       transition: all 0.3s;
-    }
-
-    .hero {
-      background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
-                  url('https://images.unsplash.com/photo-1587390999474-3305c6108ecf') no-repeat center center/cover;
-      color: white;
-      padding: 150px 0;
-      text-align: center;
-      position: relative;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
     }
 
     .hero h1 {
@@ -231,16 +228,37 @@
   </nav>
 
   <!-- Hero Section -->
-  <section id="home" class="hero">
-    <div class="container hero-content">
-      <h1 class="display-4 animate__animated animate__fadeInDown">Welcome to PrediXi</h1>
-      <p class="lead animate__animated animate__fadeInUp">Your AI-powered cricket match prediction and team analysis platform.</p>
-      <div class="mt-4 animate__animated animate__fadeInUp animate__delay-1s">
+  <section id="home" class="hero position-relative">
+    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="https://femalecricket.com/wp-content/uploads/2021/09/Cricket-betting-in-india.jpg" class="d-block w-100" alt="Slide 1">
+        </div>
+        <div class="carousel-item">
+          <img src="https://img.freepik.com/free-photo/cricket-equipments-green-grass_53876-63200.jpg?semt=ais_hybrid&w=740" class="d-block w-100" alt="Slide 2">
+        </div>
+        <div class="carousel-item">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdEitki5kxvQ0fYaD7AZsYUxXZgsaGth6P5g&s" class="d-block w-100" alt="Slide 3">
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+    <div class="container hero-content position-absolute top-50 start-50 translate-middle text-center text-white">
+      <h1 class="display-4 animate_animated animate_fadeInDown">Welcome to PrediXi</h1>
+      <p class="lead animate_animated animate_fadeInUp">Your AI-powered cricket match prediction and team analysis platform.</p>
+      <div class="mt-4 animate_animated animatefadeInUp animate_delay-1s">
         <a href="#ongoing" class="btn btn-primary btn-lg me-2">View Matches</a>
         <a href="#live" class="btn btn-outline-light btn-lg">Live Scores</a>
       </div>
     </div>
-  </section>
+  </section>
 
   <!-- Ongoing Matches -->
   <section id="ongoing" class="py-5">
