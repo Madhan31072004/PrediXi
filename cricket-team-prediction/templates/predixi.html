@@ -84,7 +84,6 @@
               <option value="" selected disabled>Select match format</option>
               <option value="Test">Test Match</option>
               <option value="ODI">One Day International</option>
-              <option value="T20">T20 International</option>
             </select>
           </div>
 
@@ -164,9 +163,8 @@
     $(document).ready(function() {
       // Venue data
       const venueData = {
-        "Test": ["Lord's (England)", "MCG (Australia)", "Wanderers (South Africa)"],
-        "ODI": ["Wankhede (India)", "Eden Gardens (India)", "Gaddafi (Pakistan)"],
-        "T20": ["Dubai International", "Melbourne Cricket Ground", "Newlands (Cape Town)"]
+        "Test": ["Dehradun", "Thiruvananthapuram", "Ahmedabad"],
+        "ODI": ["Chennai", "Kolkata", "Jaipur", "Delhi"]
       };
 
       // Format selection handler
@@ -182,7 +180,7 @@
           // Populate venues
           $venueSelect.empty().append('<option value="" selected disabled>Select venue</option>');
           venueData[format].forEach(venue => {
-            $venueSelect.append(<option value="${venue}">${venue}</option>);
+            $venueSelect.append(`<option value="${venue}">${venue}</option>`);
           });
         } else {
           $venueSection.fadeOut(300);
