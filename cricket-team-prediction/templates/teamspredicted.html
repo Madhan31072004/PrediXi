@@ -69,18 +69,6 @@
         .try-again-btn:hover {
             background-color: #45a049;
         }
-        .default-avatar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #555;
-            color: white;
-            font-weight: bold;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
     </style>
 </head>
 <body>
@@ -93,18 +81,7 @@
             {% if teams[i] and teams[i]|length > 0 %}
                 {% for player in teams[i] %}
                 <div class="player">
-                    {% if player.get('Photo') %}
-                        {% if player.Photo.startswith('http') %}
-                            <img src="{{ player.Photo }}" alt="{{ player.get('PlayerName', 'Player Image') }}"
-                                 onerror="this.onerror=null;this.classList.add('default-avatar');this.outerHTML='<div class=\'default-avatar\'>{{ player.get(\'PlayerName\', \'P\')[0:1] }}</div>';">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='images/'+player['Photo']) }}" 
-                                 alt="{{ player.get('PlayerName', 'Player Image') }}"
-                                 onerror="this.onerror=null;this.classList.add('default-avatar');this.outerHTML='<div class=\'default-avatar\'>{{ player.get(\'PlayerName\', \'P\')[0:1] }}</div>';">
-                        {% endif %}
-                    {% else %}
-                        <div class="default-avatar">{{ player.get('PlayerName', 'P')[0:1] }}</div>
-                    {% endif %}
+                    <img src="{{ url_for('static', filename='images/'+player['Photo']) }}" alt="{{ player.get('PlayerName', 'Player Image') }}">
                     <div class="player-info">
                         <span>{{ player.get('PlayerName', 'Unknown') }}</span>
                         <span>({{ player.get('Role', 'N/A') }}, {{ player.get('Team', 'N/A') }})</span>
