@@ -7,7 +7,7 @@ from xgboost import XGBClassifier
 import logging
 import random
 # -------------------- Initialize Flask App --------------------
-app = Flask(_name_,static_url_path='/static', template_folder='templates')
+app = Flask(__name__,static_url_path='/static')
 app.secret_key = '23c6a9eb7d6456ae6bf0472cbed52f2d'
 # Configure Logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -15,7 +15,7 @@ app.logger.setLevel(logging.DEBUG)
 
 # -------------------- Load Data Function --------------------
 def load_data(format_type):
-    base_path = os.path.join(os.path.dirname(_file_), "datasets")
+    base_path = os.path.join(os.path.dirname(__file__), "datasets")
     file_paths = {
         "Batsmen": os.path.join(base_path, f"Batsman_data_{format_type}.xlsx"),
         "Bowlers": os.path.join(base_path, f"Bowlers_daata_{format_type}.xlsx"),
@@ -367,6 +367,6 @@ def predict():
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 # -------------------- Run Flask App --------------------
-if _name_ == "_main_":
+if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=false)
+    app.run(host="0.0.0.0", port=port, debug=True)
