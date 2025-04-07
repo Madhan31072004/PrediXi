@@ -7,7 +7,7 @@ from xgboost import XGBClassifier
 import logging
 import random
 # -------------------- Initialize Flask App --------------------
-app = Flask(__name__,static_url_path='/static')
+app = Flask(__name__,static_url_path='cricket-team-prediction/static')
 app.secret_key = '23c6a9eb7d6456ae6bf0472cbed52f2d'
 # Configure Logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
