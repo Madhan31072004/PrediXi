@@ -271,9 +271,6 @@ def create_balanced_team(players_df, team_size=11):
 @app.route("/")
 def home():
     return render_template("index.html")
-@app.route('/predixi')
-def predict():
-    return render_template('predixi.html')
 @app.route('/register')
 def register():
     return render_template("register.html")
