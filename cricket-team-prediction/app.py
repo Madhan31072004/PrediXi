@@ -274,9 +274,6 @@ def home():
 @app.route('/register')
 def register():
     return render_template("register.html")
-@app.route('/predixi')
-def register():
-    return render_template("/admin/predixi.html")
 @app.route('/dashboard')
 def dashboard():
     return render_template("dashboard.html")
