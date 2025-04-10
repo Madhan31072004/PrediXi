@@ -267,31 +267,27 @@
     // =========================================================================
     // TODO: Replace with your actual Firebase project configuration
     // =========================================================================
-    // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBOhj8FYPcUKIZsFQDzvIeAUaNIOxP6hwE",
-    authDomain: "predixi-78708.firebaseapp.com",
-    projectId: "predixi-78708",
-    storageBucket: "predixi-78708.firebasestorage.app",
-    messagingSenderId: "436837749961",
-    appId: "1:436837749961:web:0df94a02dcb0579605a918",
-    measurementId: "G-44NG70SQGZ"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOhj8FYPcUKIZsFQDzvIeAUaNIOxP6hwE",
+      authDomain: "predixi-78708.firebaseapp.com",
+      projectId: "predixi-78708",
+      storageBucket: "predixi-78708.firebasestorage.app",
+      messagingSenderId: "436837749961",
+      appId: "1:436837749961:web:0df94a02dcb0579605a918",
+      measurementId: "G-44NG70SQGZ"
+    };
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); // Get the Auth instance (compat version)
+
+    // List of admin emails (replace with your actual admin emails)
+    const ADMIN_EMAILS = [
+      "bsaimanikantabikkumalla@gmail.com",
+      "gopaladasmadhanmohan70998@gmail.com",
+      "samreenshaik627@gmail.com"
+      // Add more admin emails as needed
+    ];
 
     document.addEventListener('DOMContentLoaded', function() {
       const loginForm = document.getElementById("loginForm");
@@ -339,6 +335,11 @@
           errorMessageDiv.textContent = '';
       }
 
+      // Check if user is admin
+      function isAdmin(email) {
+        return ADMIN_EMAILS.includes(email.toLowerCase());
+      }
+
       // --- Event Listeners ---
 
       // Password toggle functionality
@@ -370,8 +371,15 @@
             // Signed in successfully
             const user = userCredential.user;
             console.log("User signed in:", user.uid);
-            // Redirect to the main page (index.html at root)
-            window.location.href = "/"; // Redirects to your site's root
+            
+            // Check if user is admin
+            if (isAdmin(user.email)) {
+              // Redirect admin to the prediction page
+              window.location.href = "predixi.html"; // You can change this URL as needed
+            } else {
+              // Redirect regular users to the main page
+              window.location.href = "index.html"; // Redirects to your site's root
+            }
           })
           .catch((error) => {
             const errorCode = error.code;
