@@ -273,7 +273,7 @@ def home():
     return render_template("index.html")
 @app.route('/predict')
 def predict():
-    return render_template('predixl.html')
+    return render_template('predixi.html')
 @app.route('/register')
 def register():
     return render_template("register.html")
