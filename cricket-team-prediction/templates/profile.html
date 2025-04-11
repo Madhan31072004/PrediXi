@@ -1,5 +1,4 @@
-<!DOCTYPE html> 
-<!-- rg -->
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -13,6 +12,7 @@
     <title>Profile - PrediXI</title>
 
     <style>
+      /* [Your existing CSS remains unchanged] */
       * {
         margin: 0;
         padding: 0;
@@ -26,7 +26,6 @@
         line-height: 1.5;
       }
 
-      /* Navbar Styling */
       .navbar {
         background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       }
@@ -335,7 +334,9 @@
             <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
             <li class="nav-item"><a class="nav-link active" href="/profile">Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+            <li class="nav-item" id="logout-link-container">
+              <a class="nav-link" href="#" id="logoutLink">Logout</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -354,42 +355,31 @@
     <!-- PROFILE BODY -->
     <div id="app-container" class="profile-container"></div>
 
-    <!-- JS: Profile Rendering and Interaction -->
-    <script>
-      // Load user data from localStorage (from registration)
-      function loadUserData() {
-        const savedUser = localStorage.getItem('registeredUser');
-        if (savedUser) {
-          return JSON.parse(savedUser);
-        } else {
-          // If no registration data, create default from registration form
-          return {
-            id: 'user' + Math.floor(Math.random() * 10000),
-            username: 'cricketfan',
-            fullName: '',
-            email: '',
-            mobile: '',
-            password: '',
-            balance: 0,
-            profileImage: 'https://randomuser.me/api/portraits/men/' + Math.floor(Math.random() * 100) + '.jpg',
-            joinedDate: new Date().toISOString(),
-            lastLogin: new Date().toISOString(),
-            stats: {
-              matchesPredicted: 0,
-              correctPredictions: 0,
-              accuracy: 0,
-              rank: 0
-            }
-          };
-        }
-      }
+    <!-- Firebase SDK and Profile Logic -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+      import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+      import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+      import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
 
-      // Save user data to localStorage
-      function saveUserData(userData) {
-        localStorage.setItem('registeredUser', JSON.stringify(userData));
-      }
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBOhj8FYPcUKIZsFQDzvIeAUaNIOxP6hwE",
+        authDomain: "predixi-78708.firebaseapp.com",
+        projectId: "predixi-78708",
+        storageBucket: "predixi-78708.appspot.com",
+        messagingSenderId: "436837749961",
+        appId: "1:436837749961:web:0df94a02dcb0579605a918",
+        measurementId: "G-44NG70SQGZ"
+      };
 
-      // Validate form fields (same as registration validation)
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
+
+      // Validation Functions
       function validateName(name) {
         const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
         return usernameRegex.test(name);
@@ -405,20 +395,49 @@
         return emailRegex.test(email);
       }
 
-      function validatePassword(password) {
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(password);
+      // Upload Image to Firebase Storage
+      async function uploadProfileImage(userId, file) {
+        try {
+          const storageRef = ref(storage, `profileImages/${userId}/${Date.now()}_${file.name}`); // Unique filename with timestamp
+          console.log("Uploading image to:", storageRef.fullPath);
+          const snapshot = await uploadBytes(storageRef, file);
+          console.log("Image uploaded successfully:", snapshot.metadata);
+          const downloadURL = await getDownloadURL(storageRef);
+          console.log("Download URL:", downloadURL);
+          return downloadURL;
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          throw error;
+        }
       }
 
-      // Render the profile page with view or edit mode
-      function renderProfilePage(userData, editMode = false) {
+      // Delete Image from Firebase Storage
+      async function deleteProfileImage(imageUrl) {
+        if (!imageUrl) return; // No image to delete
+        try {
+          const fileRef = ref(storage, imageUrl);
+          console.log("Attempting to delete image:", fileRef.fullPath);
+          await deleteObject(fileRef);
+          console.log("Image deleted successfully:", imageUrl);
+        } catch (error) {
+          console.error("Error deleting image:", error);
+          if (error.code !== 'storage/object-not-found') {
+            throw error;
+          }
+        }
+      }
+
+      // Render Profile Page
+      async function renderProfilePage(user, userData, editMode = false) {
         const container = document.getElementById('app-container');
+        
+        console.log("Rendering profile with userData:", userData);
         
         container.innerHTML = `
           <div class="profile-card">
             <div class="profile-left">
               <div class="profile-image-container">
-                <img src="${userData.profileImage}" alt="Profile" id="profileImage">
+                <img src="${userData.profileImage || 'https://randomuser.me/api/portraits/men/' + Math.floor(Math.random() * 100) + '.jpg'}" alt="Profile" id="profileImage">
               </div>
               <div class="image-upload">
                 ${editMode ? `
@@ -432,23 +451,22 @@
                 <h3>${userData.fullName || userData.username}</h3>
                 <p class="text-muted">Member since ${new Date(userData.joinedDate).toLocaleDateString()}</p>
               </div>
-              
               ${!editMode ? `
                 <div class="stats-container">
                   <div class="stat-item">
-                    <div class="stat-value">${userData.stats.matchesPredicted}</div>
+                    <div class="stat-value">${userData.stats?.matchesPredicted || 0}</div>
                     <div class="stat-label">Matches</div>
                   </div>
                   <div class="stat-item">
-                    <div class="stat-value">${userData.stats.correctPredictions}</div>
+                    <div class="stat-value">${userData.stats?.correctPredictions || 0}</div>
                     <div class="stat-label">Correct</div>
                   </div>
                   <div class="stat-item">
-                    <div class="stat-value">${userData.stats.accuracy}%</div>
+                    <div class="stat-value">${userData.stats?.accuracy || 0}%</div>
                     <div class="stat-label">Accuracy</div>
                   </div>
                   <div class="stat-item">
-                    <div class="stat-value">#${userData.stats.rank}</div>
+                    <div class="stat-value">#${userData.stats?.rank || 0}</div>
                     <div class="stat-label">Rank</div>
                   </div>
                 </div>
@@ -494,7 +512,7 @@
                     ${editMode ? `
                       <input type="email" class="form-control" id="emailInput" value="${userData.email}">
                       <span id="emailError" class="error-message"></span>
-                    ` : `<span class="value">${userData.email || 'Not provided'}</span>`}
+                    ` : `<span class="value">${userData.email}</span>`}
                   </div>
                 </div>
                 
@@ -510,21 +528,10 @@
                 </div>
                 
                 <div class="input-group">
-                  <span class="icon"><i class="fas fa-lock"></i></span>
-                  <div class="input-container">
-                    <label>Password</label>
-                    ${editMode ? `
-                      <input type="password" class="form-control" id="passwordInput" value="${userData.password}">
-                      <span id="passwordError" class="error-message"></span>
-                    ` : `<span class="value">••••••••</span>`}
-                  </div>
-                </div>
-                
-                <div class="input-group">
                   <span class="icon"><i class="fas fa-wallet"></i></span>
                   <div class="input-container">
                     <label>Wallet Balance</label>
-                    <span class="value balance">$${userData.balance.toFixed(2)}</span>
+                    <span class="value balance">$${userData.balance?.toFixed(2) || '0.00'}</span>
                   </div>
                 </div>
               </div>
@@ -541,23 +548,27 @@
               ` : ''}
             </div>
           </div>`;
-          
-        // Add event listeners if in edit mode
+
+        // Event Listeners for Edit Mode
         if (editMode) {
-          // Image upload handler
+          let newImageFile = null;
+
+          // Image Upload Handler
           document.getElementById('imageUpload')?.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
+              newImageFile = file;
+              console.log("Selected file:", file.name, file.size);
               const reader = new FileReader();
               reader.onload = function(event) {
+                console.log("Previewing image locally");
                 document.getElementById('profileImage').src = event.target.result;
-                userData.profileImage = event.target.result;
               };
               reader.readAsDataURL(file);
             }
           });
-          
-          // Field validation handlers
+
+          // Validation Handlers
           document.getElementById('fullNameInput')?.addEventListener('input', function() {
             const errorElement = document.getElementById('fullNameError');
             if (this.value.length > 0 && this.value.length < 3) {
@@ -570,7 +581,7 @@
               this.classList.add('is-valid');
             }
           });
-          
+
           document.getElementById('usernameInput')?.addEventListener('input', function() {
             const errorElement = document.getElementById('usernameError');
             if (!validateName(this.value)) {
@@ -583,7 +594,7 @@
               this.classList.add('is-valid');
             }
           });
-          
+
           document.getElementById('emailInput')?.addEventListener('input', function() {
             const errorElement = document.getElementById('emailError');
             if (!validateEmail(this.value)) {
@@ -596,10 +607,10 @@
               this.classList.add('is-valid');
             }
           });
-          
+
           document.getElementById('mobileInput')?.addEventListener('input', function() {
             const errorElement = document.getElementById('mobileError');
-            if (!validateMobile(this.value)) {
+            if (this.value && !validateMobile(this.value)) {
               errorElement.textContent = "Please enter a valid 10-digit mobile number";
               this.classList.add('is-invalid');
               this.classList.remove('is-valid');
@@ -609,102 +620,156 @@
               this.classList.add('is-valid');
             }
           });
-          
-          document.getElementById('passwordInput')?.addEventListener('input', function() {
-            const errorElement = document.getElementById('passwordError');
-            if (!validatePassword(this.value)) {
-              errorElement.textContent = "Password must contain 8+ chars with uppercase, lowercase, number and special char";
-              this.classList.add('is-invalid');
-              this.classList.remove('is-valid');
-            } else {
-              errorElement.textContent = "";
-              this.classList.remove('is-invalid');
-              this.classList.add('is-valid');
-            }
-          });
-          
-          // Save button handler
-          document.getElementById('saveProfileBtn').addEventListener('click', function() {
-            // Validate all fields before saving
+
+          // Save Button Handler
+          document.getElementById('saveProfileBtn').addEventListener('click', async function() {
             const fullName = document.getElementById('fullNameInput').value;
             const username = document.getElementById('usernameInput').value;
             const email = document.getElementById('emailInput').value;
             const mobile = document.getElementById('mobileInput').value;
-            const password = document.getElementById('passwordInput').value;
-            
+
             let isValid = true;
-            
+
             if (fullName.length > 0 && fullName.length < 3) {
               document.getElementById('fullNameInput').classList.add('is-invalid');
               isValid = false;
             }
-            
+
             if (!validateName(username)) {
               document.getElementById('usernameInput').classList.add('is-invalid');
               isValid = false;
             }
-            
+
             if (!validateEmail(email)) {
               document.getElementById('emailInput').classList.add('is-invalid');
               isValid = false;
             }
-            
+
             if (mobile && !validateMobile(mobile)) {
               document.getElementById('mobileInput').classList.add('is-invalid');
               isValid = false;
             }
-            
-            if (password && !validatePassword(password)) {
-              document.getElementById('passwordInput').classList.add('is-invalid');
-              isValid = false;
-            }
-            
+
             if (!isValid) {
               alert('Please correct the errors before saving.');
               return;
             }
-            
-            // Update user data
-            userData.fullName = fullName;
-            userData.username = username;
-            userData.email = email;
-            userData.mobile = mobile;
-            if (password) userData.password = password;
-            
-            // Save to localStorage (in a real app, you would send to backend)
-            saveUserData(userData);
-            
-            // Render view mode
-            renderProfilePage(userData, false);
-            
-            // Show success message
-            alert('Profile updated successfully!');
+
+            try {
+              // Handle image upload and deletion
+              let profileImageUrl = userData.profileImage;
+              if (newImageFile) {
+                console.log("New image selected, handling upload and deletion");
+                // Delete old image if it exists
+                if (profileImageUrl) {
+                  await deleteProfileImage(profileImageUrl);
+                }
+                // Upload new image with a unique filename
+                profileImageUrl = await uploadProfileImage(user.uid, newImageFile);
+                console.log("New profile image URL:", profileImageUrl);
+              } else {
+                console.log("No new image selected, keeping existing:", profileImageUrl);
+              }
+
+              // Update userData object
+              userData.fullName = fullName;
+              userData.username = username;
+              userData.email = email;
+              userData.mobile = mobile;
+              userData.profileImage = profileImageUrl;
+
+              // Save to Firestore
+              const userDocRef = doc(db, "users", user.uid);
+              console.log("Saving to Firestore:", {
+                fullName: userData.fullName,
+                username: userData.username,
+                email: userData.email,
+                mobile: userData.mobile,
+                profileImage: userData.profileImage || null,
+              });
+              await updateDoc(userDocRef, {
+                fullName: userData.fullName,
+                username: userData.username,
+                email: userData.email,
+                mobile: userData.mobile,
+                profileImage: userData.profileImage || null,
+              });
+
+              alert('Profile updated successfully!');
+              renderProfilePage(user, userData, false);
+            } catch (error) {
+              console.error("Error in save process:", error);
+              alert('Failed to update profile: ' + error.message);
+            }
           });
-          
-          // Cancel button handler
+
+          // Cancel Button Handler
           document.getElementById('cancelEditBtn').addEventListener('click', function() {
-            renderProfilePage(userData, false);
+            renderProfilePage(user, userData, false);
           });
         } else {
-          // Edit button handler
+          // Edit Button Handler
           document.getElementById('editProfileBtn')?.addEventListener('click', function() {
-            renderProfilePage(userData, true);
+            renderProfilePage(user, userData, true);
           });
         }
       }
 
+      // Initialize App
       function initApp() {
-        // Load user data from registration
-        let userData = loadUserData();
-        
-        // If coming from registration, show success message
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('fromRegistration')) {
-          alert('Registration successful! Welcome to PrediXI.');
-        }
-        
-        // Render the profile page
-        renderProfilePage(userData);
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            console.log("User is logged in:", user.uid, user.email);
+            // Fetch user data from Firestore
+            try {
+              const userDocRef = doc(db, "users", user.uid);
+              const userDoc = await getDoc(userDocRef);
+              if (userDoc.exists()) {
+                const userData = {
+                  username: userDoc.data().username || user.email.split('@')[0],
+                  fullName: userDoc.data().fullName || '',
+                  email: userDoc.data().email || user.email,
+                  mobile: userDoc.data().mobile || '',
+                  joinedDate: userDoc.data().createdAt?.toDate().toISOString() || new Date().toISOString(),
+                  profileImage: userDoc.data().profileImage || null,
+                  balance: userDoc.data().balance || 0,
+                  stats: userDoc.data().stats || {
+                    matchesPredicted: 0,
+                    correctPredictions: 0,
+                    accuracy: 0,
+                    rank: 0
+                  }
+                };
+                console.log("Fetched user data from Firestore:", userData);
+                renderProfilePage(user, userData);
+              } else {
+                alert("User data not found in Firestore.");
+                window.location.href = '/';
+              }
+            } catch (error) {
+              console.error("Error fetching user data:", error);
+              alert("Error loading profile. Please try again.");
+              window.location.href = '/login';
+            }
+          } else {
+            console.log("User is logged out.");
+            window.location.href = '/login';
+          }
+        });
+
+        // Logout Handler
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+          e.preventDefault();
+          signOut(auth)
+            .then(() => {
+              console.log("User signed out successfully.");
+              window.location.href = '/login';
+            })
+            .catch((error) => {
+              console.error("Sign out error:", error);
+              alert("Error signing out. Please try again.");
+            });
+        });
       }
 
       document.addEventListener('DOMContentLoaded', initApp);
