@@ -9,7 +9,19 @@ import logging
 import random
 from urllib.parse import quote
 from werkzeug.utils import secure_filename
-from PIL import Image
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+    try:
+        import sys
+        import subprocess
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+        from PIL import Image
+        PIL_AVAILABLE = True
+    except:
+        pass
 
 # -------------------- Initialize Flask App --------------------
 app = Flask(__name__, static_url_path='/static', static_folder='cricket-team-prediction/static')
