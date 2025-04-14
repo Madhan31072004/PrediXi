@@ -333,6 +333,7 @@ def profile():
 
 @app.route("/team")
 def team():
+    
     teams_data = session.get('formatted_teams', [])
     team1_name = session.get('team1_name', "Team 1")
     team2_name = session.get('team2_name', "Team 2")
@@ -340,6 +341,7 @@ def team():
     team4_name = "Team 4"
 
     teams = [team_data for team_data in teams_data if team_data]
+    app.logger.debug(f"Data passed to teamspredicted.html: {teams_data}")
     app.logger.debug(f"Rendering {len(teams)} teams: {[len(t) for t in teams]}")
     return render_template("teamspredicted.html",
                          teams=teams,
