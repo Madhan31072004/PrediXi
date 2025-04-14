@@ -1,3 +1,4 @@
+#teamspredicted.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -184,14 +185,12 @@
                     <h3>{{ team1_name if i == 0 else team2_name if i == 1 else 'Team ' ~ (i+1) }}</h3>
                     
                     {% if teams[i] and teams[i]|length > 0 %}
-                                                <div class="players-list">
+                        <div class="players-list">
                             {% for player in teams[i] %}
                             <div class="player">
-                                {# --- CORRECTED IMG TAG --- #}
-                                <img src="{{ player.get('Photo', url_for('static', filename='images/default.jpg')) }}"
-                                     alt="{{ player.get('PlayerName', 'Player Image') }}"
-                                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/default.jpg') }}';">
-                                {# --- END CORRECTION --- #}
+                               <img src="{{ url_for('static', filename='images/players/' ~ player['Photo'].lower().replace(' ', '_')) }}" 
+     alt="{{ player.get('PlayerName', 'Player Image') }}"
+     onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'">
 
                                 <div class="player-info">
                                     <span class="player-name">{{ player.get('PlayerName', 'Unknown') }}</span>
