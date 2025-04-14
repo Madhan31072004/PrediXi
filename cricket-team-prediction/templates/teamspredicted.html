@@ -188,7 +188,7 @@
                         <div class="players-list">
                             {% for player in teams[i] %}
                             <div class="player">
-                               <img src="{{ url_for('static', filename='images/players/' ~ player['Photo'].lower().replace(' ', '_')) }}" 
+                               <img src="{{ url_for('static', filename='images/' ~ player['Photo'].lower().replace(' ', '_')) }}" 
      alt="{{ player.get('PlayerName', 'Player Image') }}"
      onerror="this.src='{{ url_for('static', filename='images/default.jpg') }}'">
 
